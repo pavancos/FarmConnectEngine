@@ -91,7 +91,7 @@ mc.connect().then(client => {
     app.get('/getWholesaleListings', async (req, res) => {
         try {
             // Query the collection to get All the crops from the collection
-            await cropListingCollection.find({ TypeOfListing:"Wholesale" }).toArray().then((crops) => {
+            await cropListingCollection.find({ TypeOfListing: "Wholesale" }).toArray().then((crops) => {
                 res.send({
                     cropListings: crops
                 });
@@ -109,7 +109,7 @@ mc.connect().then(client => {
     app.get('/getRetailListings', async (req, res) => {
         try {
             // Query the collection to get All the crops from the collection
-            await cropListingCollection.find({ TypeOfListing:"Retail" }).toArray().then((crops) => {
+            await cropListingCollection.find({ TypeOfListing: "Retail" }).toArray().then((crops) => {
                 res.send({
                     cropListings: crops
                 });
@@ -145,6 +145,130 @@ mc.connect().then(client => {
                     payload: crop
                 });
             }
+        } catch (error) {
+            res.status(500).send({
+                message: 'An error occurred',
+                error: error.message
+            });
+        }
+    });
+
+    // updateQuantity : UPDATE Endpoint - For updating the quantity of a Product in the list
+    app.put('/updateQuantity/:id', async (req, res) => {
+        try {
+            let ID = Number(req.params.id);
+            let crop = await cropListingCollection.findOne({ id: ID });
+            if (!crop) {
+                res.status(404).send({
+                    message: 'Crop not found'
+                });
+                return;
+            }
+            let newQuantity = req.body.quantity;
+            await cropListingCollection.updateOne({ id: ID }, { $set: { Quantity: newQuantity } });
+            res.send({
+                message: 'Quantity updated successfully',
+                payload: crop
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: 'An error occurred',
+                error: error.message
+            });
+        }
+    });
+
+    // updatePrice : UPDATE Endpoint - For updating the price of a Product in the list
+    app.put('/updatePrice/:id', async (req, res) => {
+        try {
+            let ID = Number(req.params.id);
+            let crop = await cropListingCollection.findOne({ id: ID });
+            if (!crop) {
+                res.status(404).send({
+                    message: 'Crop not found'
+                });
+                return;
+            }
+            let newPrice = req.body.price;
+            await cropListingCollection.updateOne({ id: ID }, { $set: { Price: newPrice } });
+            res.send({
+                message: 'Price updated successfully',
+                payload: crop
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: 'An error occurred',
+                error: error.message
+            });
+        }
+    });
+
+    // updateStartingBid : UPDATE Endpoint - For updating the starting bid of a Product in the list
+    app.put('/updateStartingBid/:id', async (req, res) => {
+        try {
+            let ID = Number(req.params.id);
+            let crop = await cropListingCollection.findOne({ id: ID });
+            if (!crop) {
+                res.status(404).send({
+                    message: 'Crop not found'
+                });
+                return;
+            }
+            let newStartingBid = req.body.startingBid;
+            await cropListingCollection.updateOne({ id: ID }, { $set: { StartingBid: newStartingBid } });
+            res.send({
+                message: 'Starting Bid updated successfully',
+                payload: crop
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: 'An error occurred',
+                error: error.message
+            });
+        }
+    });
+
+    // updateTypeOfListing : UPDATE Endpoint - For updating the Type of Listing of a Product in the list
+    app.put('/updateTypeOfListing/:id', async (req, res) => {
+        try {
+            let ID = Number(req.params.id);
+            let crop = await cropListingCollection.findOne({ id: ID });
+            if (!crop) {
+                res.status(404).send({
+                    message: 'Crop not found'
+                });
+                return;
+            }
+            let newTypeOfListing = req.body.typeOfListing;
+            await cropListingCollection.updateOne({ id: ID }, { $set: { TypeOfListing: newTypeOfListing } });
+            res.send({
+                message: 'Type of Listing updated successfully',
+                payload: crop
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: 'An error occurred',
+                error: error.message
+            });
+        }
+    });
+
+    // deleteListing/:id : DELETE Endpoint - For deleting a Product from the list
+    app.delete('/deleteListing/:id', async (req, res) => {
+        try {
+            let ID = Number(req.params.id);
+            let crop = await cropListingCollection.findOne({ id: ID });
+            if (!crop) {
+                res.status(404).send({
+                    message: 'Crop not found'
+                });
+                return;
+            }
+            await cropListingCollection.deleteOne({ id: ID });
+            res.send({
+                message: 'Crop deleted successfully',
+                payload: crop
+            });
         } catch (error) {
             res.status(500).send({
                 message: 'An error occurred',
